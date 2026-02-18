@@ -1,7 +1,7 @@
 import numpy as np
 
 class LogisticRegressionModel:
-    def __init__(self,explain,depend,features,eta_w,eta_b):
+    def __init__(self,explain,depend,features,eta):
         #説明変数X(d次元列ベクトルn個分), 目的変数y(n個分の0か1のラベル)
         self.X = explain
         self.N = self.X.shape[0]
@@ -12,8 +12,7 @@ class LogisticRegressionModel:
         self.W = np.zeros((self.dim, features)) 
         self.b = np.zeros(features)
         #bとwの学習率
-        self.eta_w = eta_w
-        self.eta_b = eta_b
+        self.eta = eta
 
         self.loss_history = []
 
@@ -47,8 +46,8 @@ class LogisticRegressionModel:
         #print(f"grad_w: {grad_w}, grad_b: {grad_b:.4f}")
 
         # パラメータの更新
-        self.W -= self.eta_w * grad_w
-        self.b -= self.eta_b * grad_b
+        self.W -= self.eta * grad_w
+        self.b -= self.eta * grad_b
 
 if __name__ == "__main__":
     # サンプルデータ
