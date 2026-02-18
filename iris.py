@@ -7,17 +7,21 @@ from plotter import Plotter
 INTERVAL = 0.05
 NUM_STEP = 300
 
-ETA_W = 0.1
-ETA_B = 1
+ETA = 10
 
 iris = load_iris()
 
 X = iris.data
 Y = iris.target
 
-model = lrm(X, Y, 3, ETA_W, ETA_B)
+# 標準化
+X_mean = np.mean(X, axis=0)
+X_std = np.std(X, axis=0)
+X_scaled = (X - X_mean) / X_std
 
-plt = Plotter(INTERVAL, X, Y)
+model = lrm(X_scaled, Y, 3, ETA)
+
+plt = Plotter(INTERVAL, X_scaled, Y)
 model.calc_P()
 model.calc_loss()
 plt.show(model, 0)
