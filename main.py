@@ -13,7 +13,7 @@ CLUSTER_RANGE = 100
 INTERVAL = 0.05
 NUM_STEP = 100
 
-ETA_W = 0.01
+ETA_W = 0.00001
 ETA_B = 0.01
 
 X, Y = make_blobs(n_samples=N_SAMPLES, n_features=N_FEATURES, centers=N_CENTERS, 

@@ -29,7 +29,7 @@ class LogisticRegressionModel:
     def shift(self):
         # 勾配を計算
         grad_w, grad_b = self.grad()
-        print(f"grad_w: {grad_w}, grad_b: {grad_b:.4f}")
+        #print(f"grad_w: {grad_w}, grad_b: {grad_b:.4f}")
 
         # パラメータの更新
         self.w += self.eta_w * grad_w
