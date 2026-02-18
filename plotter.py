@@ -36,18 +36,18 @@ class Plotter:
         loss = -np.mean(self.depend * np.log(p + epsilon) + (1 - self.depend) * np.log(1 - p + epsilon))
         return loss
 
-    def show(self, model, step):
-        current_loss = self._calc_loss(model)
+    def show(self, models, step):
+        current_loss = self._calc_loss(models)
         self.loss_history.append(current_loss)
         
         if self.ax_data is not None:
             self.ax_data.cla()
             if self.dim == 1:
-                self._plot_1d(model)
+                self._plot_1d(models)
             elif self.dim == 2:
-                self._plot_2d(model)
+                self._plot_2d(models)
             elif self.dim == 3:
-                self._plot_3d(model, step)
+                self._plot_3d(models, step)
                 
         self.ax_loss.cla()
         self.ax_loss.plot(self.loss_history, color='purple', linewidth=2)
