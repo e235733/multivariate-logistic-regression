@@ -1,4 +1,5 @@
 from sklearn.datasets import make_blobs
+import numpy as np
 
 from logistic_regression import LogisticRegressionModel as lrm
 from plotter import Plotter
@@ -15,13 +16,21 @@ NUM_STEP = 100
 ETA_W = 0.01
 ETA_B = 0.01
 
+X, Y = make_blobs(n_samples=N_SAMPLES, n_features=N_FEATURES, centers=N_CENTERS, 
+                  cluster_std=CLUSTER_STD, center_box=(-CLUSTER_RANGE, CLUSTER_RANGE))
 
-X, Y = make_blobs(n_samples=N_SAMPLES, n_features=N_FEATURES, centers=N_CENTERS, cluster_std=CLUSTER_STD, center_box=(-CLUSTER_RANGE, CLUSTER_RANGE))
-print(X, Y)
+models = []
+for c in np.unique(Y):
+    # One-vs-Rest
+    Y_ovr = np.where(Y == c, 1, 0)
+    
+    model_c = lrm(X, Y_ovr, ETA_W, ETA_B)
+    models.append(model_c)
 
 plt = Plotter(INTERVAL, X, Y)
 
-model = lrm(X, Y, ETA_W, ETA_B)
 for i in range(NUM_STEP):
-    model.shift()
-    plt.show(model, i+1)
+    for model in models:
+        model.shift()
+    
+    plt.show(models, i+1)
