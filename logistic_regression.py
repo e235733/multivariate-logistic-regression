@@ -6,7 +6,7 @@ class LogisticRegressionModel:
         self.X = explain
         self.y = depend
         #調整すべきパラメータb:切片、w:d次元分の傾きを作成
-        self.num_features = self.X.shape[0]
+        self.num_features = self.X.shape[1]
         self.w = np.zeros(self.num_features)
         self.b = 0.0
         #bとwの学習率
@@ -15,14 +15,13 @@ class LogisticRegressionModel:
 
     def grad(self):
         # 予測値
-        z = self.w @ self.X + self.b
+        z = self.w @ self.X.T + self.b
         p = 1 / (1 + np.exp(-z))
 
         # 誤差
         d = self.y - p
-
         # 勾配
-        grad_w = d @ self.X.T
+        grad_w = d @ self.X
         grad_b = np.sum(d)
 
         return grad_w, grad_b 
