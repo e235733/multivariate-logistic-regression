@@ -8,7 +8,9 @@ class Plotter:
         self.depend = depend
         
         # データの次元数 を取得
-        self.dim = explain.shape[0] 
+        self.dim = explain.shape[1] 
+        print(np.shape(explain))
+        print(self.dim)
 
         # 学習曲線の履歴
         self.loss_history = []
@@ -35,7 +37,7 @@ class Plotter:
 
     # 交差エントロピー誤差
     def _calc_loss(self, model):
-        z = model.w @ self.explain + model.b
+        z = model.w @ self.explain.T + model.b
         p = 1 / (1 + np.exp(-z))
         epsilon = 1e-15 # log(0)のエラーを防ぐ微小値
         loss = -np.mean(self.depend * np.log(p + epsilon) + (1 - self.depend) * np.log(1 - p + epsilon))
@@ -73,7 +75,7 @@ class Plotter:
 
     def _plot_1d(self, model):
         self.ax_data.set_title("1D: Sigmoid Curve")
-        self.ax_data.scatter(self.explain[0], self.depend, c=self.depend, cmap='bwr', alpha=0.6, edgecolors='k')
+        self.ax_data.scatter(self.explain[0], self.depend, cmap='bwr', alpha=0.6, edgecolors='k')
         
         x_min, x_max = np.min(self.explain), np.max(self.explain)
         x_line = np.linspace(x_min - 1, x_max + 1, 100)
@@ -95,12 +97,13 @@ class Plotter:
         self.ax_data.contour(xx, yy, p, levels=[0.5], colors='green', linewidths=2) # 境界線(50%)
 
         # 散布図
-        self.ax_data.scatter(self.explain[0], self.explain[1], c=self.depend, cmap='bwr', edgecolors='k')
+        print(self.explain)
+        self.ax_data.scatter(self.explain[:, 0], self.explain[:, 1], cmap='bwr', edgecolors='k')
 
     def _plot_3d(self, model, step):
         self.ax_data.set_title("3D: Separating Hyperplane")
         # 3D散布図
-        self.ax_data.scatter(self.explain[0], self.explain[1], self.explain[2], c=self.depend, cmap='bwr', alpha=0.8)
+        self.ax_data.scatter(self.explain[0], self.explain[1], self.explain[0], cmap='bwr', alpha=0.8)
         
         # 分離平面の描画
         if abs(model.w[2]) > 1e-5: # 0除算防止
