@@ -55,7 +55,7 @@ class Plotter:
         
         x_min, x_max = np.min(self.explain[:, 0]), np.max(self.explain[:, 0])
         x_line = np.linspace(x_min - 1, x_max + 1, 100)
-        y_line = 1 / (1 + np.exp(-(model.w[0] * x_line + model.b)))
+        y_line = 1 / (1 + np.exp(-(model.W[0] * x_line + model.b)))
         
         self.ax_data.plot(x_line, y_line, color='green', linewidth=2)
         self.ax_data.grid(True)
@@ -64,24 +64,32 @@ class Plotter:
         self.ax_data.set_title("2D: Decision Boundary")
         x_min, x_max = np.min(self.explain[:, 0])-1, np.max(self.explain[:, 0])+1
         y_min, y_max = np.min(self.explain[:, 1])-1, np.max(self.explain[:, 1])+1
+        
         xx, yy = np.meshgrid(np.linspace(x_min, x_max, 50), np.linspace(y_min, y_max, 50))
         
-        z = model.w[0]*xx + model.w[1]*yy + model.b
-        p = 1 / (1 + np.exp(-z))
-        self.ax_data.contourf(xx, yy, p, alpha=0.3, cmap='bwr')
-        self.ax_data.contour(xx, yy, p, levels=[0.5], colors='green', linewidths=2)
+        grid_points = np.c_[xx.ravel(), yy.ravel()]
+        
+        Z_grid = grid_points @ model.W + model.b
+        Z_max_grid = np.max(Z_grid, axis=1, keepdims=True)
+        exp_Z_grid = np.exp(Z_grid - Z_max_grid)
+        P_grid = exp_Z_grid / np.sum(exp_Z_grid, axis=1, keepdims=True)
+        
+        predicted_grid = np.argmax(P_grid, axis=1)
+        predicted_grid = predicted_grid.reshape(xx.shape)
 
+        self.ax_data.contourf(xx, yy, predicted_grid, alpha=0.3, cmap='bwr')
+        
         self.ax_data.scatter(self.explain[:, 0], self.explain[:, 1], c=self.depend, cmap='bwr', edgecolors='k')
 
     def _plot_3d(self, model, step):
         self.ax_data.set_title("3D: Separating Hyperplane")
         self.ax_data.scatter(self.explain[:, 0], self.explain[:, 1], self.explain[:, 2], c=self.depend, cmap='bwr', alpha=0.8, edgecolors='k')
         
-        if abs(model.w[2]) > 1e-5:
+        if abs(model.W[2]) > 1e-5:
             x_min, x_max = np.min(self.explain[:, 0]), np.max(self.explain[:, 0])
             y_min, y_max = np.min(self.explain[:, 1]), np.max(self.explain[:, 1])
             xx, yy = np.meshgrid(np.linspace(x_min, x_max, 10), np.linspace(y_min, y_max, 10))
-            zz = -(model.w[0]*xx + model.w[1]*yy + model.b) / model.w[2]
+            zz = -(model.W[0]*xx + model.W[1]*yy + model.b) / model.W[2]
             
             z_min, z_max = np.min(self.explain[:, 2])-2, np.max(self.explain[:, 2])+2
             zz = np.clip(zz, z_min, z_max)

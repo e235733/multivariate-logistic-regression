@@ -17,24 +17,27 @@ class LogisticRegressionModel:
 
         self.loss_history = []
 
-    def grad(self):
-        # 予測値
-        #print(np.shape(self.X), np.shape(self.W))
-        Z = self.X @ self.W + self.b
-        Z_max = np.max(Z, axis=1, keepdims=True)
-        exp_Z = np.exp(Z - Z_max)
-        P = exp_Z / np.sum(exp_Z,axis=1,keepdims=True)
-
-        dz = P - self.Y
-        # 勾配
-        grad_w = self.X.T @ dz / self.N
-        grad_b = np.sum(dz,axis=0) / self.N
-
+    def calc_loss(self):
         #損失評価
-        logP = np.log(P)
+        logP = np.log(self.P)
         loss = -np.sum(self.Y * logP) / self.N
         print("loss: ", loss)
         self.loss_history.append(loss)
+
+    def calc_P(self):
+        Z = self.X @ self.W + self.b
+        Z_max = np.max(Z, axis=1, keepdims=True)
+        exp_Z = np.exp(Z - Z_max)
+        self.P = exp_Z / np.sum(exp_Z,axis=1,keepdims=True)
+
+    def grad(self):
+        # 予測値
+        #print(np.shape(self.X), np.shape(self.W))
+        self.calc_P()
+        dz = self.P - self.Y
+        # 勾配
+        grad_w = self.X.T @ dz / self.N
+        grad_b = np.sum(dz,axis=0) / self.N
 
         return grad_w, grad_b
     
