@@ -28,17 +28,7 @@ class Plotter:
         else:
             self.ax_loss = self.fig.add_subplot(1, 1, 1)
 
-    def _calc_loss(self, model):
-        # explain.T で (次元数, データ数) に変換してから内積をとる（完璧です！）
-        z = model.w @ self.explain.T + model.b
-        p = 1 / (1 + np.exp(-z))
-        epsilon = 1e-15
-        loss = -np.mean(self.depend * np.log(p + epsilon) + (1 - self.depend) * np.log(1 - p + epsilon))
-        return loss
-
-    def show(self, models, step):
-        current_loss = self._calc_loss(models)
-        self.loss_history.append(current_loss)
+    def show(self, models, step, loss_history):
         
         if self.ax_data is not None:
             self.ax_data.cla()
@@ -50,8 +40,8 @@ class Plotter:
                 self._plot_3d(models, step)
                 
         self.ax_loss.cla()
-        self.ax_loss.plot(self.loss_history, color='purple', linewidth=2)
-        self.ax_loss.set_title(f"Learning Curve (Loss = {current_loss:.4f})")
+        self.ax_loss.plot(loss_history, color='purple', linewidth=2)
+        self.ax_loss.set_title(f"Learning Curve")
         self.ax_loss.set_xlabel("Iteration (Step)")
         self.ax_loss.set_ylabel("Cross Entropy Loss")
         self.ax_loss.grid(True)
