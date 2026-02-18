@@ -28,19 +28,19 @@ class Plotter:
         else:
             self.ax_loss = self.fig.add_subplot(1, 1, 1)
 
-    def show(self, models, step, loss_history):
+    def show(self, model, step):
         
         if self.ax_data is not None:
             self.ax_data.cla()
             if self.dim == 1:
-                self._plot_1d(models)
+                self._plot_1d(model)
             elif self.dim == 2:
-                self._plot_2d(models)
+                self._plot_2d(model)
             elif self.dim == 3:
-                self._plot_3d(models, step)
+                self._plot_3d(model, step)
                 
         self.ax_loss.cla()
-        self.ax_loss.plot(loss_history, color='purple', linewidth=2)
+        self.ax_loss.plot(model.loss_history, color='purple', linewidth=2)
         self.ax_loss.set_title(f"Learning Curve")
         self.ax_loss.set_xlabel("Iteration (Step)")
         self.ax_loss.set_ylabel("Cross Entropy Loss")
